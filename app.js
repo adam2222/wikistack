@@ -11,8 +11,8 @@ var env = nunjucks.configure("views", {noCache: true});
 app.set('view engine', 'html');
 app.engine('html', nunjucks.render);
 
-routes.use(bodyParser.json());
-routes.use(bodyParser.urlencoded());
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded());
 
 app.use(morgan('dev'));
 
