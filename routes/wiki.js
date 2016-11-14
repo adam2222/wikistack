@@ -4,15 +4,18 @@ var bodyParser = require('body-parser')
 
 
 router.get('/', function(req, res, next){
-  res.send('retrieve all wiki pages')
+  res.redirect('/')
 })
 
 router.get('/add', function(req, res, next){
-  res.send('retrieve add')
+  res.render('addpage')
 })
 
 router.post('/', function(req, res, next){
-  res.send('submit new page')
+  res.send(req.body)
+
+  // res.json(req.body);
+  // res.send('submit new page')
 })
 
 module.exports = router;

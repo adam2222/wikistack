@@ -11,11 +11,13 @@ var env = nunjucks.configure("views", {noCache: true});
 app.set('view engine', 'html');
 app.engine('html', nunjucks.render);
 
-app.use('/', routes);
-app.use('/wiki', wikiRouter);
+routes.use(bodyParser.json());
+routes.use(bodyParser.urlencoded());
 
 app.use(morgan('dev'));
 
+app.use('/wiki', wikiRouter);
+app.use('/', routes);
 
 app.use(express.static('public'));
 
