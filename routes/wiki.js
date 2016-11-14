@@ -22,8 +22,7 @@ router.post('/', function(req, res, next){
   });
 
   page.save();
-
-  res.redirect('/');
+  res.json(page);
 })
 
 module.exports = router;
