@@ -16,16 +16,12 @@ app.use(morgan('dev'));
 
 app.use(express.static('public'));
 
-app.listen(5432, function(req, res) {
-	console.log("We're Listening...");
-});
-
 models.User.sync({})
 .then(function () {
     return models.Page.sync({})
 })
 .then(function () {
-    server.listen(5432, function () {
+    app.listen(3000, function () {
         console.log('Server is listening on port 3000!');
     });
 })
