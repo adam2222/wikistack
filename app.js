@@ -4,13 +4,16 @@ var morgan = require('morgan')
 var bodyParser = require('body-parser');
 var nunjucks = require('nunjucks');
 var routes = require('./routes/index.js');
+var wikiRouter = require('./routes/wiki.js');
 var models = require('./models/index.js');
 
 var env = nunjucks.configure("views", {noCache: true});
 app.set('view engine', 'html');
 app.engine('html', nunjucks.render);
 
-app.use(routes)
+app.use('/', routes);
+app.use('/wiki', wikiRouter);
+
 app.use(morgan('dev'));
 
 
