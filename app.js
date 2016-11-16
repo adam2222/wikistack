@@ -1,33 +1,46 @@
-var express = require('express');
-var app = express();
-var morgan = require('morgan')
-var bodyParser = require('body-parser');
-var nunjucks = require('nunjucks');
-var routes = require('./routes/index.js');
-var wikiRouter = require('./routes/wiki.js');
-var models = require('./models/index.js');
+var express = require('express'),
+ app = express(),
+ morgan = require('morgan'),
+ bodyParser = require('body-parser'),
+ nunjucks = require('nunjucks'),
+ routes = require('./routes/index.js'),
+ wikiRouter = require('./routes/wiki.js'),
+ usersRouter = require('./routes/users.js'),
+ models = require('./models/index.js');
 
-var env = nunjucks.configure("views", {noCache: true});
+
 app.set('view engine', 'html');
-app.engine('html', nunjucks.render);
+app.engine('html',  nunjucks.render);
+nunjucks.configure("views", { noCache: true });
 
+app.use(bodyParser.urlencoded( { extended: false }));
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded());
 
 app.use(morgan('dev'));
-
-app.use('/wiki', wikiRouter);
-app.use('/', routes);
-
 app.use(express.static('public'));
 
-models.User.sync({})
-.then(function () {
-    return models.Page.sync({})
+// ******************
+
+app.use('/wiki', wikiRouter);
+app.use('/users', usersRouter);
+app.use('/', routes);
+
+
+// ******************
+
+app.use('/', function(err, req, res, next){
+	console.error(err);
+	res.status(500).send(err.message);
 })
-.then(function () {
+
+models.Page.sync({ force: false })
+	.then(models.User.sync({ force: false }))
+	.then(function() {
     app.listen(3000, function () {
         console.log('Server is listening on port 3000!');
     });
-})
-.catch(console.error);
+	})
+.catch(function(err){
+  console.error(err);
+  res.status(500).send(err.message);
+});

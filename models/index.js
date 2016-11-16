@@ -1,18 +1,16 @@
 
 var Sequelize = require('sequelize');
-var db = new Sequelize('postgres://localhost:5432/wikistack', {
-    logging: false
-});
+var db = new Sequelize('postgres://localhost:5432/wikistack', { logging: false }
+);
 
 
-  function generateUrlTitle(title){
-    if (title) {
-      return title.replace(/\s+/g, '_').replace(/\W/g, '');
-    } else {
-      return Math.random().toString(36).substring(2, 7);
-    }
+function generateUrlTitle(title){
+  if (title) {
+    return title.replace(/\s+/g, '_').replace(/\W/g, '');
+  } else {
+    return Math.random().toString(36).substring(2, 7);
   }
-
+}
 
 var Page = db.define('page', {
     title: {
@@ -34,21 +32,20 @@ var Page = db.define('page', {
     date: {
       type: Sequelize.DATE,
       defaultValue: Sequelize.NOW
+    }
+}, {
+    hooks:  {
+      beforeValidate: function(page){
+        console.log(page)
+        page.urlTitle = generateUrlTitle(page.title)
+        }
     },
-    route: {
-      type: Sequelize.DataTypes.VIRTUAL,
-      defaultValue: function(){
-        return '/wiki/' + this.urlTitle
+    getterMethods: {
+      route: function(page){
+        return "/wiki/" + this.urlTitle;
       }
     }
-
-}, { hooks:  {
-    beforeValidate: function(title){
-      this.urlTitle = generateUrlTitle(this.title);
-    }
-  }
 });
-
 
 var User = db.define('user', {
     name: {
@@ -63,6 +60,8 @@ var User = db.define('user', {
 
     }
 });
+
+Page.belongsTo(User, { as: 'author' });
 
 module.exports = {
   Page: Page,
